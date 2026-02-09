@@ -2,7 +2,6 @@
 
 # 🎯 **How Everything Connects (The Full Flow)**
 ## **Example: User asks "Add $50 lunch expense"**
-```
 1. FastAPI receives POST /chat
    ├─> api.py: chat_endpoint()
    │
@@ -52,7 +51,7 @@
     ├─> FastAPI: ChatResponse
     └─> User gets: {"answer": "I've added...", "steps_taken": 2, ...}
 
-```
+
 ---
 
 # 🚀 Deployment: From Basic to Advanced
@@ -220,3 +219,114 @@ Once it runs in Docker, any cloud just runs your container.
 | How to automate checks? | GitHub Actions | `.github/workflows/ci.yml` |
 
 ---
+
+If you want, I can provide **Terraform or CloudFormation** templates for AWS/Azure/GCP next.
+
+---
+
+# 📁 Suggested Folder Structure (What goes where)
+
+When projects grow, a clear layout helps you know **where to look** and **what to deploy**. Here's a simple structure you can use for this app (you can reorganize later if you want):
+
+```
+expense_agent/
+├── api.py                 # FastAPI routes (how clients call your app)
+├── main.py                # Entry point that runs Uvicorn
+├── database.py            # DB config + repository pattern
+├── models.py              # Pydantic schemas + ORM models
+├── agent.py               # Agent orchestration logic
+├── tools.py               # Agent tools (add expense, etc.)
+├── prompts.py             # Prompt templates for the LLM
+├── Dockerfile             # Container build recipe
+├── docker-compose.yml     # Run API + DB locally together
+├── .env.example           # Example secrets/config for local
+├── .github/
+│   └── workflows/
+│       └── ci.yml         # CI pipeline definition
+└── readme.md              # Documentation
+```
+
+**Why this structure?**
+- You separate **runtime code** (API, agent, DB) from **deployment files** (Docker, Compose, CI).
+- When you move to AWS/Azure/GCP, you only deploy the **Docker image** and supply config.
+
+---
+
+# ✅ CI/CD Explained (What is `ci.yml` and why we need it?)
+
+`ci.yml` is a **GitHub Actions pipeline file**. It tells GitHub:
+
+> "When code changes, automatically run a set of checks so we know the app still works."
+
+### ✅ What it does (line by line intuition)
+```yaml
+name: CI
+```
+This names the workflow so it's readable in GitHub.
+
+```yaml
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+```
+This means:
+- Run the checks every time you **push to main**, and
+- Run checks on **every pull request** (before merge).
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+```
+GitHub will create a **fresh Linux machine** for your checks.
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+```
+Download your code into that machine.
+
+```yaml
+  - uses: actions/setup-python@v5
+    with:
+      python-version: "3.11"
+```
+Install Python so it can run your app.
+
+```yaml
+  - run: pip install fastapi uvicorn sqlalchemy psycopg2-binary
+```
+Install dependencies. This makes sure your imports won't fail.
+
+```yaml
+  - run: python - <<'PY'
+      import api, database, agent, models
+      print("✅ Imports OK")
+      PY
+```
+This **sanity check** makes sure your core modules can be imported without crashing.
+
+---
+
+### ✅ Why do we need CI at all?
+
+CI solves these problems:
+
+- **Catches mistakes early** (e.g., missing dependency, syntax error)
+- **Ensures deploys don’t break** (if CI fails, you fix it before deployment)
+- **Builds trust** that the repo works on any machine
+
+Without CI:
+- You only find errors *after* deployment (which is risky).
+
+---
+
+### ✅ How does this help deployment?
+
+Deployment is just running the same code somewhere else.
+CI gives confidence that:
+
+✅ The code can run in a clean environment  
+✅ Dependencies are installed correctly  
+✅ The basic app imports don’t crash  
