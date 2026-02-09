@@ -4,12 +4,15 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timezone
 from typing import List, Optional
 from models import Expense as ExpenseSchema, Budget as BudgetSchema
-
+import os
 # ============================================================================
 # DATABASE CONFIGURATION
 # ============================================================================
 
-DB_URI = "postgresql://postgres:ayush@172.29.208.1:5432/agent_campusx?sslmode=disable"
+# DB_URI = "postgresql://postgres:ayush@172.29.208.1:5432/agent_campusx?sslmode=disable"
+DB_URI = os.getenv(
+    "DATABASE_URL"
+)
 
 # create SQLAlchemy engine
 
