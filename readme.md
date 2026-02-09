@@ -1,7 +1,6 @@
 ---
 
 # 🎯 **How Everything Connects (The Full Flow)**
-
 ## **Example: User asks "Add $50 lunch expense"**
 ```
 1. FastAPI receives POST /chat
