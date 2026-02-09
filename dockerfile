@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY . /app
 
-RUN pip install -no-cache-dir fastapi uvicorn sqlalchemy psycopg2-binary
+RUN pip install --no-cache-dir fastapi uvicorn sqlalchemy psycopg2-binary langgraph langchain langchain-openai python-dotenv
 
 EXPOSE 8000
 

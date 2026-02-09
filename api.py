@@ -8,6 +8,7 @@ from typing import List
 from contextlib import asynccontextmanager
 import traceback
 import logging
+from sqlalchemy import text
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -131,7 +132,7 @@ async def health_check():
     """Check if API and database are running"""
     try:
         db = next(get_db())
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "healthy", "database": "connected"}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")

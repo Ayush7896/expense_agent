@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from typing import List, Optional
 from models import Expense as ExpenseSchema, Budget as BudgetSchema
 import os
+from dotenv import load_dotenv
+load_dotenv()
 # ============================================================================
 # DATABASE CONFIGURATION
 # ============================================================================
